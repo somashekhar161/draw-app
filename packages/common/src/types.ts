@@ -1,14 +1,13 @@
 import { z } from "zod";
 
 export const CreateUserSchema = z.object({
-  username: z.string().min(3).max(30),
-  password: z.string(),
-  name: z.string(),
+  email: z.string().email(),
+  password: z.string().min(8, "Password must be at least 8 characters long"),
 });
 
 export const SigninSchema = z.object({
-  username: z.string().min(3).max(30),
-  password: z.string(),
+  email: z.string().email(),
+  password: z.string().min(8, "Password must be at least 8 characters long"),
 });
 
 export const CreateRoomSchema = z.object({
