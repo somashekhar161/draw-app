@@ -13,8 +13,10 @@ import { prisma, prismaClient } from "@repo/db/client";
 import bcrypt from "bcryptjs";
 
 const app = express();
+app.use(express.json());
 
 app.post("/signup", async (req, res) => {
+  console.log(req.body);
   const data = CreateUserSchema.safeParse(req.body);
   if (data.error) {
     res.json({ message: data.error });
