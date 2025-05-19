@@ -112,6 +112,21 @@ app.post("/room", middleware, async (req, res) => {
   }
 });
 
+app.get("/chat/:roomId", async function (req, res) {
+  const roomId = Number(req.params.roomId);
+
+  const messages = await prismaClient.chat.findMany({
+    where: {
+      roomId: roomId,
+    },
+    take: 50,
+    orderBy: {
+      id: "desc",
+    },
+  });
+  res.json({ data: messages });
+});
+
 app.listen(8000, () => {
   console.log("http server running at http://localhost:8000");
 });
