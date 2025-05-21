@@ -1,3 +1,41 @@
+/**
+ * Express HTTP backend server for user authentication, room creation, and chat message retrieval.
+ *
+ * ## Endpoints
+ *
+ * - `POST /signup`: Registers a new user. Expects a request body matching `CreateUserSchema`.
+ *   - Hashes the password before storing.
+ *   - Returns a success message and user data, or appropriate error messages for validation, duplicate user, or server errors.
+ *
+ * - `POST /signin`: Authenticates a user. Expects a request body matching `SigninSchema`.
+ *   - Validates credentials and returns a JWT token on success.
+ *   - Returns error messages for invalid credentials or validation errors.
+ *
+ * - `POST /room`: Creates a new chat room. Protected by authentication middleware.
+ *   - Expects a request body matching `CreateRoomSchema`.
+ *   - Associates the room with the authenticated user as admin.
+ *   - Returns the created room data or error messages for duplicate room names or creation errors.
+ *
+ * - `GET /chat/:roomId`: Retrieves the latest 50 chat messages for a given room, ordered by descending ID.
+ *   - Returns an array of chat messages.
+ *
+ * ## Middleware
+ * - Uses a custom authentication middleware to protect the `/room` endpoint.
+ *
+ * ## Dependencies
+ * - Express for HTTP server.
+ * - Prisma for database access.
+ * - bcryptjs for password hashing.
+ * - jsonwebtoken for JWT authentication.
+ * - Zod schemas for request validation.
+ *
+ * ## Configuration
+ * - JWT secret is imported from shared configuration.
+ * - Prisma client is imported from shared database module.
+ *
+ * ## Server
+ * - Listens on port 8000.
+ */
 import express from "express";
 import jwt from "jsonwebtoken";
 
