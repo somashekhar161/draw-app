@@ -165,6 +165,16 @@ app.get("/chat/:roomId", async function (req, res) {
   res.json({ data: messages });
 });
 
+app.get("/room/:slug", async function (req, res) {
+  const slug = String(req.params.slug);
+
+  const room = await prismaClient.room.findFirst({
+    where: {
+      slug: slug,
+    },
+  });
+  res.json({ data: room });
+});
 app.listen(8000, () => {
   console.log("http server running at http://localhost:8000");
 });
