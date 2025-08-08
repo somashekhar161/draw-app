@@ -1,3 +1,6 @@
+import { HTTP_BACKEND } from "@/config";
+import axios from "axios";
+
 type Shape =
   | {
       type: "rect";
@@ -12,17 +15,29 @@ type Shape =
       centerY: number;
       radius: number;
     };
-export function initDraw(canvas: HTMLCanvasElement) {
+export async function initDraw(
+  canvas: HTMLCanvasElement,
+  roomId: string,
+  socket: WebSocket
+) {
   const ctx = canvas.getContext("2d");
-  let existingShape: Shape[] = [];
+
+  const existingShape: Shape[] = await getExistingShape(roomId);
   if (!ctx) {
     return;
   }
-  ctx.fillStyle = "rgba(0,0,0)";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  socket.onmessage = (event) => {
+    const message = JSON.parse(event.data);
+    if (message.type == "chat") {
+      const parsedShape = JSON.parse(message.message);
+      existingShape.push(parsedShape);
+      clearCanvas(existingShape, canvas, ctx);
+    }
+  };
+
+  clearCanvas(existingShape, canvas, ctx);
 
   let clicked = false;
-
   let startX = 0;
   let startY = 0;
 
@@ -37,7 +52,16 @@ export function initDraw(canvas: HTMLCanvasElement) {
     const height = e.clientY - startY;
 
     ctx.strokeStyle = "rgba(255,255,255)";
-    existingShape.push({ type: "rect", x: startX, y: startY, height, width });
+    const shape: Shape = { type: "rect", x: startX, y: startY, height, width };
+    existingShape.push(shape);
+    socket.send(
+      JSON.stringify({
+        type: "chat",
+        roomId: Number(roomId),
+        userId: "2",
+        message: JSON.stringify(shape),
+      })
+    );
   });
   canvas.addEventListener("mousemove", (e) => {
     if (clicked) {
@@ -68,4 +92,14 @@ function clearCanvas(
       ctx.strokeRect(shape.x, shape.y, shape.width, shape.height);
     }
   });
+}
+
+async function getExistingShape(roomId: string) {
+  const res = await axios.get(`${HTTP_BACKEND}/chat/${roomId}`);
+  const messages = res.data.data;
+  const shapes = messages.map((x: { message: string }) => {
+    const messageData = JSON.parse(x.message);
+    return messageData;
+  });
+  return shapes;
 }

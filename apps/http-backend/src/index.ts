@@ -49,10 +49,11 @@ import {
 } from "@repo/common/types";
 import { prisma, prismaClient } from "@repo/db/client";
 import bcrypt from "bcryptjs";
-
+import cors from "cors";
 const app = express();
-app.use(express.json());
 
+app.use(express.json());
+app.use(cors());
 app.post("/signup", async (req, res) => {
   console.log(req.body);
   const data = CreateUserSchema.safeParse(req.body);
