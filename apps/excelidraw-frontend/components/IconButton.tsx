@@ -12,7 +12,7 @@ const IconButton = ({
   return (
     <button
       onClick={onClick}
-      className="bg-white hover:scale-105 active:scale-95 transition-transform p-2 text-black rounded-full font-semibold  disabled:[&>svg]:text-white disabled:text-white disabled:bg-black disabled:border disabled:border-white"
+      className="disabled:bg-white hover:scale-105 active:scale-95 transition-transform p-2 disabled:text-black rounded-full font-semibold  disabled:[&>svg]:text-black text-white bg-black border  border-white disabled:border-none"
       disabled={activated}
     >
       {icon}
